@@ -8,11 +8,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, CONTACT_ROUTE, GIFT_ROUTE } from "./routes.js";
 
-import { ContactsPage } from "./components/contacts.jsx";
-import { ContactPage } from "./components/contact.jsx";
-import { GiftsPage } from "./components/gifts.jsx";
-import { GiftPage } from "./components/gift.jsx";
-import { SettingsPage } from "./components/settings.jsx";
+import { ContactsPage } from "./pages/contacts.jsx";
+import { ContactPage } from "./pages/contact.jsx";
+import { GiftsPage } from "./pages/gifts.jsx";
+import { GiftPage } from "./pages/gift.jsx";
+import { SettingsPage } from "./pages/settings.jsx";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -51,7 +51,7 @@ export default function App() {
           headerLeft: props => (
             <Ionicons
               {...props}
-              style={{ fontSize: "30%" }}
+              style={{ fontSize: 30 }}
               onPress={() => navigation.navigate('Settings')}
               name="ios-settings"
             />
