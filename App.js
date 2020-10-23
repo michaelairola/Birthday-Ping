@@ -1,13 +1,12 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
+import React from 'react';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, CONTACT_ROUTE, GIFT_ROUTE } from "./routes.js";
-
 import { ContactsPage } from "./pages/contacts.jsx";
 import { ContactPage } from "./pages/contact.jsx";
 import { GiftsPage } from "./pages/gifts.jsx";
@@ -17,7 +16,7 @@ import { SettingsPage } from "./pages/settings.jsx";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function MainTabs() {
+function MainTabs(props) {
   return (
     <Tab.Navigator
       screenOptions={({ route: { name } }) => ({
@@ -38,7 +37,7 @@ function MainTabs() {
     </Tab.Navigator>
   );
 }
-
+// TODO February 29th lolol!
 export default function App() {
   return (
     <NavigationContainer>
@@ -46,17 +45,18 @@ export default function App() {
         <Stack.Screen name="Home" 
           component={MainTabs} 
           options={({ route, navigation }) => ({
-          headerTitle: getFocusedRouteNameFromRoute(route) ?? 'Home',
-          headerLeftContainerStyle: { marginLeft: 15 },
-          headerLeft: props => (
-            <Ionicons
-              {...props}
-              style={{ fontSize: 30 }}
-              onPress={() => navigation.navigate('Settings')}
-              name="ios-settings"
-            />
-          )
-        })} />
+            headerTitle: getFocusedRouteNameFromRoute(route) ?? 'Home',
+            headerLeftContainerStyle: { marginLeft: 15 },
+            headerLeft: props => (
+              <Ionicons
+                {...props}
+                style={{ fontSize: 30 }}
+                onPress={() => navigation.navigate('Settings')}
+                name="ios-settings"
+              />
+            )
+            })} 
+        />
         {Object.keys(RegRoutes).map(key => (
           <Stack.Screen key={key} name={key} component={RegRoutes[key]} />
         ))}
