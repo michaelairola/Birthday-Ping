@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
 import { styles } from '../styles.js';
 // import { GIFT_ROUTE } from "../routes.js";
-import { getContacts } from "../db";
+// import { getContacts } from "../db";
 import { LoadingPage } from "../components/loading";
 import { NoContacts } from "../components/NoContacts";
 
 export function GiftsPage({ navigation }) {
-	const [ isLoading, setLoading ] = useState(true);
+	const [ isLoading, setLoading ] = useState(false);
 	const [ contacts, setContacts ] = useState([]);
 	useEffect(() => {
-	  	getContacts().then(cs => {
-		    setContacts(cs);
-		    setLoading(false);
-		})
+	 //  	getContacts().then(cs => {
+		//     setContacts(cs);
+		//     setLoading(false);
+		// })
 	    return () => {}
 	}, [])
 

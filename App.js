@@ -1,13 +1,15 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { Provider } from "react-redux";
+import { store } from "./db";
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, CONTACT_ROUTE, GIFT_ROUTE } from "./routes.js";
-import { ContactsPage } from "./pages/contacts.jsx";
+import ContactsPage from "./pages/contacts.jsx";
 import { ContactPage } from "./pages/contact.jsx";
 import { GiftsPage } from "./pages/gifts.jsx";
 import { GiftPage } from "./pages/gift.jsx";
@@ -40,7 +42,7 @@ function MainTabs(props) {
 // TODO February 29th lolol!
 export default function App() {
   return (
-    <NavigationContainer>
+    <Provider store={store}><NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" 
           component={MainTabs} 
@@ -62,7 +64,7 @@ export default function App() {
         ))}
       </Stack.Navigator>
       <StatusBar style="default" />
-    </NavigationContainer>
+    </NavigationContainer></Provider>
   );
 }
 
