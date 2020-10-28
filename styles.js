@@ -8,9 +8,20 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
+    margin: 10, 
+    fontSize: 20,
+  },
+  dayHeader: {
   	color: "grey",
   	margin: 10,
   	fontSize: 18,
+  },
+  mainText: {
+    fontSize: 18,
+  },
+  text: {
+    fontSize: 16,
+    color: "grey",
   },
   contact: {
   	flexDirection: "row",
@@ -25,9 +36,10 @@ export const styles = StyleSheet.create({
   },
   contactInfo: {
   	fontSize: 18,
-  	flex: 3,
+  	flex: 6,
   },
   birthdayInfo: {
+    fontSize: 18,
   	flex: 1,
   },
 });
