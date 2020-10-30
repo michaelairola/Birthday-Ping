@@ -2,16 +2,25 @@ import { createStore } from "redux";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
+// HRS = 3600 * 1000
+// MINS = 60 * 1000
+let time = new Date();
+time.setHours(9)
+time.setMinutes(0)
 const initState = {
 	settings: {
-
+		"BirthdayNotifications": true,
+		"BirthdayTimes": new Array(7).fill(time.toString()),
+		"GiftNotifications": true,
+		"GiftRange": "1 Month",
+		"DarkMode": false,
 	},
 	contacts: [],
 }
 const RECEIVE_DATA = 'RECEIVE_DATA';
 const receiveData = (data) => ({ type: RECEIVE_DATA, ...data })
 const RECEIVE_SETTINGS = 'RECEIVE_SETTINGS';
-const receiveSettings = settings => ({ type: RECEIVE_SETTINGS, settings });
+export const receiveSettings = settings => store.dispatch(({ type: RECEIVE_SETTINGS, settings }));
 const RECEIVE_CONTACTS = 'RECEIVE_CONTACTS'; 
 export const receiveContacts = contacts => ({ type: RECEIVE_CONTACTS, contacts });
 

@@ -23,13 +23,22 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "grey",
   },
+  settingItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    width: "100%",
+
+    backgroundColor: "white",
+    borderColor: "grey", 
+    borderWidth: 1,
+  },
   contact: {
   	flexDirection: "row",
   	alignItems: "center",
   	padding: 10,
   	width: "100%",
 
-  	// height: ,
   	backgroundColor: "white",
   	borderColor: "#A9A9A9",
   	borderBottomWidth: 1,
