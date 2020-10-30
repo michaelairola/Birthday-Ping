@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Text, View, Platform } from 'react-native';
 import { styles } from '../styles.js';
+import { SYNC_ROUTE } from '../routes.js';
 import { LoadingPage } from "../components/loading";
 import { connectToStore, receiveSettings } from "../db";
 import SettingsList from "react-native-settings-list";
@@ -8,7 +9,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 var bgColor = '#DCE3F4';
 const week = [ 'Sunday', 'Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday', 'Saturday' ]
 
-const SettingsPage = ({ isLoading, settings, navigation, route }) => {
+const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
 	const { BirthdayNotifications, BirthdayTimes, GiftNotifications, GiftRange } = settings;
 	const [ time, setTime ] = useState(undefined);
 	const [ day, setDay ] = useState(undefined);
@@ -16,13 +17,18 @@ const SettingsPage = ({ isLoading, settings, navigation, route }) => {
 	<View style={{ flex: 1 }}>
       <View style={{ backgroundColor:'#EFEFF4', flex:1 }}>
         <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
+          <SettingsList.Header headerText="Sync Contacts" />
+          <SettingsList.Item
+          	title="Sync 3rd party Contacts"
+          	onPress={() => navigation.navigate(SYNC_ROUTE)}
+      	  />
           <SettingsList.Header headerText="Birthday Notifications"/>
           <SettingsList.Item
             hasSwitch={true}
             switchState={BirthdayNotifications}
             hasNavArrow={false}
             title='Enable Birthday Notifications'
-            switchOnValueChange={BirthdayNotifications => receiveSettings({ ...settings, BirthdayNotifications })}
+            switchOnValueChange={BirthdayNotifications => dispatch(receiveSettings({ ...settings, BirthdayNotifications }))}
           />
           {!BirthdayNotifications ? undefined : ([
           		<SettingsList.Header key={0} headerText="Set the times you are notified if there are birthdays"/>,
@@ -40,7 +46,7 @@ const SettingsPage = ({ isLoading, settings, navigation, route }) => {
 	            hasSwitch={true}
 	    		hasNavArrow={false}
 	    		switchState={GiftNotifications}
-	    		switchOnValueChange={GiftNotifications => receiveSettings({ ...settings, GiftNotifications })}
+	    		switchOnValueChange={GiftNotifications => dispatch(receiveSettings({ ...settings, GiftNotifications }))}
 	    	/>
           {!GiftNotifications ? undefined : (
           		<SettingsList.Item 
@@ -49,6 +55,7 @@ const SettingsPage = ({ isLoading, settings, navigation, route }) => {
           			onPress={() => navigation.navigate("Select", { key: "GiftRange", header: "Set how far into the future you can look for gifts", items: [ '1 Month', '1 Week', '2 Weeks', '3 Weeks' ], routeName: route.name })}
           		/>
 	      )}        	
+          <SettingsList.Header headerText=" " />
 	    </SettingsList>
       </View>
 	  {(time != undefined) && (day != undefined) ? (
@@ -59,7 +66,7 @@ const SettingsPage = ({ isLoading, settings, navigation, route }) => {
 	  		 	setTime(undefined);
 	  		 }} />
 	  		 <Button title="Select" onPress={() => {
-	  		 	receiveSettings({ ...settings, BirthdayTimes: BirthdayTimes.map((v, i) => i == day || day == -1 ? time : v)})
+	  		 	dispatch(receiveSettings({ ...settings, BirthdayTimes: BirthdayTimes.map((v, i) => i == day || day == -1 ? time : v)}))
 	  		 	setDay(undefined);
 	  		 	setTime(undefined);
 	  		 }}/>
@@ -71,7 +78,7 @@ const SettingsPage = ({ isLoading, settings, navigation, route }) => {
 		  if(Platform.OS == "ios") {
 		  	setTime(selectedDate)
 		  } else {
-	  		receiveSettings({ ...settings, BirthdayTimes: BirthdayTimes.map((v, i) => i == day ? time : v)})
+	  		dispatch(receiveSettings({ ...settings, BirthdayTimes: BirthdayTimes.map((v, i) => i == day ? time : v)}))
 	  		setDay(undefined);
 	  		setTime(undefined);
 		  }

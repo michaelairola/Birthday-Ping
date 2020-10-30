@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import SearchBar from 'react-native-searchbar';
 import { styles } from '../styles.js';
 import { connect } from 'react-redux';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
 import { connectToStore } from "../db";
 
 import { LoadingPage } from "../components/loading";
@@ -52,8 +51,8 @@ function ContactsPage(props) {
 	organized_contacts = params && params.organized_contacts && params.organized_contacts.length ? params.organized_contacts : organized_contacts;
 	let [ searchBar, setBar ] = useState(undefined);
 	let [ barShowing, setShow ] = useState(false);
-	return isLoading ? <LoadingPage/> : !organized_contacts || !organized_contacts.length ? <NoContacts/> : 
-  	<View>
+	return isLoading ? <LoadingPage/> : !organized_contacts || !organized_contacts.length ? <NoContacts navigation={navigation}/> : 
+  	<ScrollView>
 		<SearchBar
 		  data={organized_contacts}
 		  ref={(ref) => setBar(ref)}
@@ -87,7 +86,6 @@ function ContactsPage(props) {
 		  		</View>
 	  		))}
 		</View>
-	</View>
+	</ScrollView>
 }
-
 export default connectToStore(ContactsPage);

@@ -1,24 +1,28 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { registerRootComponent } from 'expo';
 import React from 'react';
 import { Provider } from "react-redux";
 import { store } from "./db";
-import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppState } from "react-native";
-import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, SELECT_ROUTE, CONTACT_ROUTE, GIFT_ROUTE } from "./routes.js";
+
+import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, SYNC_ROUTE, SELECT_ROUTE, CONTACT_ROUTE, GIFT_ROUTE } from "./routes.js";
+
 import ContactsPage from "./pages/contacts.jsx";
 import { ContactPage } from "./pages/contact.jsx";
 import { GiftsPage } from "./pages/gifts.jsx";
 import { GiftPage } from "./pages/gift.jsx";
 import SettingsPage from "./pages/settings.jsx";
+import SyncPage from "./pages/sync.jsx";
 import SelectPage from "./pages/select.jsx";
 
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+import { syncInBackground } from "./vendor-permissions";
 
 function MainTabs(props) {
   return (
@@ -52,11 +56,17 @@ export default class App extends React.Component {
   }
 
   handleAppStateChange = (nextAppState) => {
-    if (nextAppState === 'inactive') {
-      console.log('the app is closed');
-    } else {
-      console.log("HI:", nextAppState)
-    }  
+    switch(nextAppState) {
+      case "inactive":
+        console.log('app has closed TODO: save app data into persistant storage.')
+        break;
+      case "active":
+        console.log("app has been opened. load things");        
+        syncInBackground()
+        break;
+      default:
+        console.log("app state:", nextAppState);
+    } 
   }
   render() {
     return (
@@ -86,7 +96,6 @@ export default class App extends React.Component {
     );
   }
 }
-registerRootComponent(App);
 
 const MainPageIcons = {
   [CONTACTS_ROUTE]: 'ios-contacts',
@@ -99,6 +108,7 @@ const MainRoutes = {
 const RegRoutes = {
   [SELECT_ROUTE]: SelectPage,
   [SETTINGS_ROUTE]: SettingsPage,
+  [SYNC_ROUTE]: SyncPage,
   [CONTACT_ROUTE]: ContactPage,
   [GIFT_ROUTE]: GiftPage,
 }
