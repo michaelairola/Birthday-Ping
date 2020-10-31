@@ -9,8 +9,8 @@ import { AppState } from "react-native";
 import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, SYNC_ROUTE, SELECT_ROUTE, CONTACT_ROUTE, GIFT_ROUTE } from "./routes.js";
 
 import ContactsPage from "./pages/contacts.jsx";
+import GiftsPage from "./pages/gifts.jsx";
 import { ContactPage } from "./pages/contact.jsx";
-import { GiftsPage } from "./pages/gifts.jsx";
 import { GiftPage } from "./pages/gift.jsx";
 import SettingsPage from "./pages/settings.jsx";
 import SyncPage from "./pages/sync.jsx";
