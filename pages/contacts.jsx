@@ -23,9 +23,15 @@ const MonthMap = [
 	"November",
 	"December"
 ]
-const getDayDiff = (date, month) => {
+const renderDay = ({ date, month }, DarkMode) => {
+	if(getDayDiff({day: date,month}) == 0) {
+		return <Text style={{ color: DarkMode ? "white" : "black", margin: 10, fontSize: 20 }}>Birthdays Today</Text>
+	}
+	return <Text style={{ color: "grey", margin: 10, fontSize: 18, }}>{MonthMap[month]} {date}</Text>
+}
+const getDayDiff = ({ day, month }) => {
 	let today = new Date(); today.setHours(0);
-	let bday = new Date(); bday.setMonth(month); bday.setDate(date); bday.setHours(0);
+	let bday = new Date(); bday.setMonth(month); bday.setDate(day); bday.setHours(0);
 	let msDiff = bday.getTime() - today.getTime();
 	if(msDiff < 0) {
 		bday.setYear(bday.getFullYear() + 1);
@@ -33,6 +39,20 @@ const getDayDiff = (date, month) => {
 	} 
 	const msPerDay = 1000 * 24 * 3600;
 	return Math.floor(msDiff / msPerDay)
+}
+const renderDayDiff = ({ day, month }, DarkMode) => {
+	const DaysTillBirthday = getDayDiff({ day, month });
+	return DaysTillBirthday ? (
+	<View style={{ fontSize: 18, flex: 1 }}>
+		<Text style={{ fontSize: 18, color: DarkMode ? "white" : "black" }}>{DaysTillBirthday}</Text>
+		<Text style={{ fontSize: 16, color: "grey" }}>days</Text>	
+	</View>
+	) : <FontAwesome
+		style={{ marginRight: 20 }} 
+		name="birthday-cake" 
+		size={24}
+		color={DarkMode ? "white" : "black"} 
+	/>
 }
 
 const getAge = ({ day, month, year }) => {
@@ -72,7 +92,7 @@ function ContactsPage(props) {
 		  	{organized_contacts.map(({ month, date, contacts },i) => (
 		  		<View key={i}>
 			  		<View style={{ backgroundColor: DarkMode ? "#121212" : undefined}}>
-			  			<Text style={{ color: "grey", margin: 10, fontSize: 18, }}>{MonthMap[month]} {date}</Text>
+			  			{renderDay({ date, month }, DarkMode)}
 			  		</View>
 			  		{contacts.map(({ name, birthday }, key) => (
 				  		<View key={key} style={{ flexDirection: "row", alignItems: "center", padding: 10, width: "100%",
@@ -82,12 +102,9 @@ function ContactsPage(props) {
 					    }}>
 				  			<View style={{ fontSize: 18, flex: 6, }}>
 				  				<Text style={{ fontSize: 18, color: DarkMode ? "white" : "black" }}>{name}</Text>
-				  				<Text style={{ fontSize: 16, color: "grey"}}>Turns {getAge(birthday)}</Text>
+				  				{birthday.year ? <Text style={{ fontSize: 16, color: "grey"}}>Turns {getAge(birthday)}</Text> : undefined }
 			  				</View>
-			  				<View style={{ fontSize: 18, flex: 1 }}>
-			  					<Text style={{ fontSize: 18, color: DarkMode ? "white" : "black" }}>{getDayDiff(date, month)}</Text>
-			  					<Text style={{ fontSize: 16, color: "grey" }}>days</Text>
-			  				</View>
+		  					{renderDayDiff(birthday, DarkMode)}
 				  		</View>
 		  			))}
 		  		</View>
