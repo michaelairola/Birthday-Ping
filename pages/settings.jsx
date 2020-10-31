@@ -1,29 +1,34 @@
 import React, { useState } from 'react';
 import { Button, Text, View, Platform } from 'react-native';
-import { styles } from '../styles.js';
 import { SYNC_ROUTE } from '../routes.js';
 import { LoadingPage } from "../components/loading";
 import { connectToStore, receiveSettings } from "../db";
 import SettingsList from "react-native-settings-list";
 import DateTimePicker from "@react-native-community/datetimepicker";
 var bgColor = '#DCE3F4';
-const week = [ 'Sunday', 'Monday', 'Tuesday', 'Wedensday', 'Thursday', 'Friday', 'Saturday' ]
+const week = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ]
 
 const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
-	const { BirthdayNotifications, BirthdayTimes, GiftNotifications, GiftRange } = settings;
+	const { BirthdayNotifications, BirthdayTimes, GiftNotifications, GiftRange, DarkMode } = settings;
 	const [ time, setTime ] = useState(undefined);
 	const [ day, setDay ] = useState(undefined);
 	return isLoading ? <LoadingPage/> : (
 	<View style={{ flex: 1 }}>
-      <View style={{ backgroundColor:'#EFEFF4', flex:1 }}>
-        <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
-          <SettingsList.Header headerText="Sync Contacts" />
-          <SettingsList.Item
+      <View style={{ backgroundColor: DarkMode ? "black" : '#EFEFF4', flex:1 }}>
+        <SettingsList 
+        	defaultItemSize={50}
+        	borderColor={DarkMode ? "#424242" : '#c8c7cc'}
+        	defaultTitleStyle={{
+        		color: DarkMode ? "white" : "black",
+        	}}
+    	>
+          <SettingsList.Header headerStyle={{ color: DarkMode ? "white" : undefined }} headerText="Sync Contacts" />
+          <SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined}
           	title="Sync 3rd party Contacts"
           	onPress={() => navigation.navigate(SYNC_ROUTE)}
       	  />
-          <SettingsList.Header headerText="Birthday Notifications"/>
-          <SettingsList.Item
+          <SettingsList.Header headerStyle={{ color: DarkMode ? "white" : undefined }} headerText="Birthday Notifications"/>
+          <SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined}
             hasSwitch={true}
             switchState={BirthdayNotifications}
             hasNavArrow={false}
@@ -31,17 +36,17 @@ const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
             switchOnValueChange={BirthdayNotifications => dispatch(receiveSettings({ ...settings, BirthdayNotifications }))}
           />
           {!BirthdayNotifications ? undefined : ([
-          		<SettingsList.Header key={0} headerText="Set the times you are notified if there are birthdays"/>,
+          		<SettingsList.Header headerStyle={{ color: DarkMode ? "white" : undefined }} key={0} headerText="Set the times you are notified if there are birthdays"/>,
 	      		...BirthdayTimes.map((v, i) => (
-	      			<SettingsList.Item key={i+2}
+	      			<SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined} key={i+2}
 	      				title={week[i]}
 	      				titleInfo={new Date(v).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
 	      				onPress={() => { setDay(i); setTime(v) }}
 	      			/>
       			))
 	      ])}
-	    	<SettingsList.Header headerText="Gift Notifications"/>
-	    	<SettingsList.Item 
+	    	<SettingsList.Header headerStyle={{ color: DarkMode ? "white" : undefined }} headerText="Gift Notifications"/>
+	    	<SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined} 
 	    		title="Enable Gift Notifications"
 	            hasSwitch={true}
 	    		hasNavArrow={false}
@@ -49,13 +54,20 @@ const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
 	    		switchOnValueChange={GiftNotifications => dispatch(receiveSettings({ ...settings, GiftNotifications }))}
 	    	/>
           {!GiftNotifications ? undefined : (
-          		<SettingsList.Item 
+          		<SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined} 
           			title="Gift Range"
           			titleInfo={GiftRange}
           			onPress={() => navigation.navigate("Select", { key: "GiftRange", header: "Set how far into the future you can look for gifts", items: [ '1 Month', '1 Week', '2 Weeks', '3 Weeks' ], routeName: route.name })}
           		/>
 	      )}        	
-          <SettingsList.Header headerText=" " />
+          <SettingsList.Header headerStyle={{ color: DarkMode ? "white" : undefined }} headerText="Themes" />
+          <SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined} 
+          	title="Dark Mode"
+          	hasSwitch={true}
+          	hasNavArrow={false}
+          	switchState={DarkMode}
+          	switchOnValueChange={DarkMode => dispatch(receiveSettings({ ...settings, DarkMode }))}
+          />
 	    </SettingsList>
       </View>
 	  {(time != undefined) && (day != undefined) ? (
@@ -72,7 +84,7 @@ const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
 	  		 }}/>
 	  		</View>
   		): undefined }
-	  	<DateTimePicker 
+	  	<DateTimePicker
 	  	value={new Date(time)} mode="time"
 	    onChange={(event, selectedDate) => {
 		  if(Platform.OS == "ios") {

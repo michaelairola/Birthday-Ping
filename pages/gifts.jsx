@@ -4,7 +4,7 @@ import { styles } from '../styles.js';
 // import { GIFT_ROUTE } from "../routes.js";
 // import { getContacts } from "../db";
 import { LoadingPage } from "../components/loading";
-import { NoContacts } from "../components/NoContacts";
+import NoContacts from "../components/NoContacts";
 
 export function GiftsPage({ navigation }) {
 	const [ isLoading, setLoading ] = useState(false);

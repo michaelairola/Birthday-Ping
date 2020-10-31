@@ -12,32 +12,44 @@ import { getPhoneContacts } from "../vendor-permissions";
 import { AntDesign } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons'; 
 
-const Synced = (
+const Synced = DarkMode => (
   <View style={{ flexDirection: "row", alignItems: "center", marginRight: 10 }}>
     <Text style={{ color: "#c8c7cc" }}>Synced   </Text>
-    <AntDesign name="check" size={24} color="black" />
+    <AntDesign name="check" size={24} color={DarkMode ? "white" : "black"} />
   </View>
 )
-const NotSynced = (
+const NotSynced = DarkMode => (
   <View style={{ flexDirection: "row", alignItems: "center", marginRight: 10 }}>
     <Text style={{ color: "#c8c7cc" }}>Not Synced   </Text>
-    <AntDesign name="sync" size={24} color="blue" />
+    <AntDesign name="sync" size={24} color={DarkMode ? "red" : "blue"} />
   </View>
   )
-const syncedStatus = ({ isFetching, synced }) => 
-  isFetching ? <CircleFade size={30} style={{ marginRight: 10 }}/> : 
-  synced ? Synced : NotSynced 
+const Loading = DarkMode => (
+  <View style={{ flexDirection: "row", alignItems: "center", marginRight: 10 }}>
+    <Text style={{ color: "#c8c7cc" }}>Loading... </Text>
+    <CircleFade size={30} color={DarkMode ? "white" : "black"} style={{ marginRight: 10 }}/>
+  </View>
+  )
+const syncedStatus = ({ isFetching, synced }, DarkMode) => 
+  isFetching ? Loading(DarkMode) : 
+  synced ? Synced(DarkMode) : NotSynced(DarkMode)
 
-const SyncPage = ({ navigation, settings: { Permissions: { phone, fb, google } } }) => {
+const SyncPage = ({ navigation, settings: { Permissions: { phone, fb, google }, DarkMode } }) => {
 	return (
 	<View style={{ flex: 1 }}>
-      <View style={{ backgroundColor:'#EFEFF4', flex:1 }}>
-        <SettingsList borderColor='#c8c7cc' defaultItemSize={50}>
-          <SettingsList.Header headerText="Sync Contacts from 3rd party vendors" />
-          <SettingsList.Item
+      <View style={{ backgroundColor: DarkMode ? "black" : '#EFEFF4', flex:1 }}>
+        <SettingsList 
+          borderColor={DarkMode ? "#424242" : '#c8c7cc'} 
+          defaultItemSize={50}
+          defaultTitleStyle={{
+            color: DarkMode ? "white" : "black",
+          }}
+        >
+          <SettingsList.Header headerStyle={{ color: DarkMode ? "white" : undefined }} headerText="Sync Contacts from 3rd party vendors" />
+          <SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined}
             hasNavArrow={false}
             title='Phone Contacts'
-            arrowIcon={syncedStatus(phone)}
+            arrowIcon={syncedStatus(phone, DarkMode)}
             onPress={getPhoneContacts(true)}
           />
         </SettingsList>

@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Provider } from "react-redux";
-import { store } from "./db";
+import { store, connectToStore } from "./db";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppState } from "react-native";
 
@@ -24,8 +24,7 @@ const Stack = createStackNavigator();
 
 import { syncInBackground } from "./vendor-permissions";
 
-function MainTabs(props) {
-  return (
+const MainTabs = connectToStore(({ settings: { DarkMode } }) => (
     <Tab.Navigator
       screenOptions={({ route: { name } }) => ({
         tabBarIcon: (props) => {
@@ -35,7 +34,9 @@ function MainTabs(props) {
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'tomato',
+        activeBackgroundColor: DarkMode ? "#212121" : "white",
+        inactiveBackgroundColor: DarkMode ? "#212121" : "white",
+        activeTintColor: DarkMode ? "#B00020" : 'tomato',
         inactiveTintColor: 'gray',
       }}
     >
@@ -43,8 +44,44 @@ function MainTabs(props) {
         <Tab.Screen key={key} name={key} component={MainRoutes[key]} />
         ))}
     </Tab.Navigator>
-  );
-}
+  )
+)
+const AppNavigator = connectToStore(({ settings: { DarkMode } }) => (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+            headerStyle: { 
+              backgroundColor: DarkMode ? "#212121" : "white", 
+            },
+            headerTintColor: DarkMode ? '#fff' : "#121212",          
+        }}
+      >
+        <Stack.Screen name="Home" 
+          component={MainTabs} 
+          options={({ route, navigation }) => ({
+            headerTitle: getFocusedRouteNameFromRoute(route) ?? 'Home',
+            headerLeftContainerStyle: { marginLeft: 15 },
+            headerLeft: props => (
+              <Ionicons
+                style={{ fontSize: 30 }}
+                color={DarkMode ? "white" : "black"}
+                onPress={() => navigation.navigate('Settings')}
+                name="ios-settings"
+              />
+            )
+            })} 
+        />
+        {Object.keys(RegRoutes).map(key => (
+          <Stack.Screen 
+            key={key} name={key} 
+            component={RegRoutes[key]} 
+          />
+        ))}
+      </Stack.Navigator>
+      <StatusBar style="default" />
+    </NavigationContainer>
+)) 
+
 // TODO February 29th lolol!
 export default class App extends React.Component {
   componentDidMount() {
@@ -70,29 +107,9 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <Provider store={store}><NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" 
-            component={MainTabs} 
-            options={({ route, navigation }) => ({
-              headerTitle: getFocusedRouteNameFromRoute(route) ?? 'Home',
-              headerLeftContainerStyle: { marginLeft: 15 },
-              headerLeft: props => (
-                <Ionicons
-                  {...props}
-                  style={{ fontSize: 30 }}
-                  onPress={() => navigation.navigate('Settings')}
-                  name="ios-settings"
-                />
-              )
-              })} 
-          />
-          {Object.keys(RegRoutes).map(key => (
-            <Stack.Screen key={key} name={key} component={RegRoutes[key]} />
-          ))}
-        </Stack.Navigator>
-        <StatusBar style="default" />
-      </NavigationContainer></Provider>
+      <Provider store={store}>
+        <AppNavigator/>
+      </Provider>
     );
   }
 }

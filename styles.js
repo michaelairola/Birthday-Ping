@@ -11,18 +11,11 @@ export const styles = StyleSheet.create({
     margin: 10, 
     fontSize: 20,
   },
-  dayHeader: {
-  	color: "grey",
-  	margin: 10,
-  	fontSize: 18,
-  },
+  dayHeader: { color: "grey", margin: 10, fontSize: 18, },
   mainText: {
     fontSize: 18,
   },
-  text: {
-    fontSize: 16,
-    color: "grey",
-  },
+  text: { fontSize: 16, color: "grey", },
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -33,20 +26,12 @@ export const styles = StyleSheet.create({
     borderColor: "grey", 
     borderWidth: 1,
   },
-  contact: {
-  	flexDirection: "row",
-  	alignItems: "center",
-  	padding: 10,
-  	width: "100%",
-
+  contact: { flexDirection: "row", alignItems: "center", padding: 10, width: "100%",
   	backgroundColor: "white",
   	borderColor: "#A9A9A9",
   	borderBottomWidth: 1,
   },
-  contactInfo: {
-  	fontSize: 18,
-  	flex: 6,
-  },
+  contactInfo: { fontSize: 18, flex: 6, },
   birthdayInfo: {
     fontSize: 18,
   	flex: 1,
