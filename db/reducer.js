@@ -101,7 +101,7 @@ export const organize_contacts = ({ contacts, medias }) => {
 		} else {
 			a = c1.date; b = c2.date, c = currentD;
 		}
-		return a < c ? 1 : b < c ? -1 : a - b;
+		return a < c && b < c ? a - b : a < c ? 1 : b < c ? -1 : a - b;
 	})
 	return ordered;
 }//)
