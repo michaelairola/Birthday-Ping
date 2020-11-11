@@ -30,12 +30,12 @@ const Loading = DarkMode => (
     <CircleFade size={30} color={DarkMode ? "white" : "black"} style={{ marginRight: 10 }}/>
   </View>
   )
-const syncedStatus = ({ isFetching, synced }, DarkMode) => 
+const syncedStatus = ({ isFetching, isSynced }, DarkMode) => 
   isFetching ? Loading(DarkMode) : 
-  synced ? Synced(DarkMode) : NotSynced(DarkMode)
+  isSynced ? Synced(DarkMode) : NotSynced(DarkMode)
 
-const SyncPage = ({ navigation, settings: { Permissions: { phone, fb, google }, DarkMode } }) => {
-	return (
+const SyncPage = ({ navigation, synced, settings: { DarkMode } }) => {
+  return (
 	<View style={{ flex: 1 }}>
       <View style={{ backgroundColor: DarkMode ? "black" : '#EFEFF4', flex:1 }}>
         <SettingsList 
@@ -49,7 +49,7 @@ const SyncPage = ({ navigation, settings: { Permissions: { phone, fb, google }, 
           <SettingsList.Item backgroundColor={DarkMode ? "#212121" : undefined}
             hasNavArrow={false}
             title='Phone Contacts'
-            arrowIcon={syncedStatus(phone, DarkMode)}
+            arrowIcon={syncedStatus(synced.phone || { isFetching: false, isSynced: false, failed: false }, DarkMode)}
             onPress={getPhoneContacts(true)}
           />
         </SettingsList>

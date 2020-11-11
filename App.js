@@ -1,8 +1,9 @@
 import 'react-native-gesture-handler';
+import 'react-native-get-random-values';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from "react-redux";
-import { store, connectToStore } from "./db";
+import { store, connectToStore, saveData, loadData, receiveData } from "./db";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppState } from "react-native";
 
@@ -84,6 +85,11 @@ const AppNavigator = connectToStore(({ settings: { DarkMode } }) => (
 
 // TODO February 29th lolol!
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    loadData();
+    syncInBackground();
+  }
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
   }
@@ -95,11 +101,13 @@ export default class App extends React.Component {
   handleAppStateChange = (nextAppState) => {
     switch(nextAppState) {
       case "inactive":
-        console.log('app has closed TODO: save app data into persistant storage.')
+        // TODO make sure this is the best solution;
+        saveData();
         break;
       case "active":
-        console.log("app has been opened. load things");        
-        syncInBackground()
+        // TODO make sure this is the best solution;
+        loadData();
+        syncInBackground();
         break;
       default:
         console.log("app state:", nextAppState);

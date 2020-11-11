@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import SearchBar from 'react-native-searchbar';
 import { styles } from '../styles.js';
 import { connect } from 'react-redux';
@@ -67,11 +67,11 @@ const getAge = ({ day, month, year }) => {
 }
 
 function ContactsPage(props) {
-	let { navigation, route: { name, params }, settings: { DarkMode }, organized_contacts, } = props
-	organized_contacts = params && params.organized_contacts && params.organized_contacts.length ? params.organized_contacts : organized_contacts;
+	let { navigation, route: { name, params }, settings: { DarkMode }, organized_contacts, contacts } = props
+	if(!params) params = {};
 	let [ searchBar, setBar ] = useState(undefined);
 	let [ barShowing, setShow ] = useState(false);
-	return !organized_contacts || !organized_contacts.length ? <NoContacts navigation={navigation}/> : 
+	return !organized_contacts.length ? <NoContacts navigation={navigation}/> : 
   	<ScrollView style={{ flex: 1, backgroundColor: DarkMode ? "#121212" : undefined }}>
 		<SearchBar
 		  backgroundColor={DarkMode ? "#121212" : undefined}
@@ -90,7 +90,7 @@ function ContactsPage(props) {
 		  		}
 			</View>
 		  	{organized_contacts.map(({ month, date, contacts },i) => (
-		  		<View key={i}>
+		  		<TouchableWithoutFeedback onPress={() => console.log("Hey chara, how are you today")} ><View key={i}>
 			  		<View style={{ backgroundColor: DarkMode ? "#121212" : undefined}}>
 			  			{renderDay({ date, month }, DarkMode)}
 			  		</View>
@@ -107,7 +107,7 @@ function ContactsPage(props) {
 		  					{renderDayDiff(birthday, DarkMode)}
 				  		</View>
 		  			))}
-		  		</View>
+		  		</View></TouchableWithoutFeedback>
 	  		))}
 		</View>
 	</ScrollView>

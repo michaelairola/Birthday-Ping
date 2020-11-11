@@ -3,19 +3,16 @@ import * as Contacts from 'expo-contacts';
 import { v4 as uuidv4 } from 'uuid';
 import { Alert } from "react-native";
 
-export const phoneContacts = async () => {
+export const phoneContacts = async (alertIfFailed = true) => {
     const { status } = await Contacts.requestPermissionsAsync();
     console.log("status:", status);
     if (status === 'granted') {
-          const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.Birthday],
-        });
-        return data.filter(({ birthday }) => birthday).map(contact => {
-           const phoneId = contact.id;
-           return { ...contact, phoneId }          
-        }) 
+        const { data } = await Contacts.getContactsAsync();
+        const usableMedias = data.filter(({ birthday }) => birthday)
+        return usableMedias;
     } else {
-      if(alert) {
+      // throw error
+      if(alertIfFailed) {
       	Alert.alert(
 	      "Phone Contacts were unable to be synced. Go to your phone's settings and allow this application to access your Contacts.",
 	      "Please go to your phone's settings and allow this application to access your Contacts."
@@ -26,19 +23,19 @@ export const phoneContacts = async () => {
     }
 } 
 
-const syncWrapper = (alertIfFailed, permReq, fn) => async () => {
-  store.dispatch(requestSync(permReq))
+const syncWrapper = (alertIfFailed, mediaKey, fn) => async () => {
+  store.dispatch(requestSync(mediaKey))
   const contacts = await fn(alertIfFailed)
   if(contacts) {
-    store.dispatch(receiveSync(permReq, contacts))
+    store.dispatch(receiveSync(mediaKey, contacts))
   } else {
-    store.dispatch(failSync(permReq))
+    store.dispatch(failSync(mediaKey))
   }
 }
 
 export const getPhoneContacts = alertIfFailed => syncWrapper(alertIfFailed, "phone", phoneContacts);
 
 export const syncInBackground = async () => {
-  const { settings: { Permissions: { phone, fb, google } } } = store.getState();
-  if(phone.synced) getPhoneContacts(false)();
+  const { synced: { phone } } = store.getState();
+  if(phone && phone.synced) getPhoneContacts(false)();
 }

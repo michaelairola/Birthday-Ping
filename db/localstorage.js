@@ -1,7 +1,9 @@
 import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-community/async-storage';
+import { store } from './store.js';
+import { requestState, receiveState, failState } from "./actions.js";
 
-const storage = new Storage({
+export const localstore = new Storage({
   // maximum capacity, default 1000 key-ids
   size: 1000,
 
@@ -20,8 +22,48 @@ const storage = new Storage({
   // the corresponding sync method will be invoked returning
   // the latest data.
   sync: {
-    // we'll talk about the details later.
   }
 });
 
-export default storage;
+const convMapToObj = (m) => {
+  let obj = {};
+  m.forEach((v, k) => {
+    obj[k] = v
+  });
+  return obj;
+}
+const convObjToMap = (obj) => {
+  let m = new Map();
+  Object.keys(obj).forEach(k => {
+    m.set(k, obj[k]);
+  })
+  return m;
+}
+const stateConverter = (state, fn = () => {}, keys = []) => {
+  keys.forEach(k => {
+    state[k] = fn(state[k]);
+  });
+  return state
+}
+const savableState = (state) => stateConverter(state, convMapToObj, ['contacts','medias']);
+const loadableState = (state) => stateConverter(state, convObjToMap, ['contacts', 'medias']);
+
+export const saveData = (deleteData) => {
+  // if(deleteData) {
+  //   localstore.remove({ key: 'state' })
+  // } else {
+    const state = savableState(store.getState());
+    localstore.save({
+      key: 'state',
+      data: state,
+      expires: null
+    })
+  // }
+}
+export const loadData = () => {
+  store.dispatch(requestState())
+  localstore.load({ key: 'state' }).then(state => {
+    if(!state) return;
+    store.dispatch(receiveState(loadableState(state)))
+  })
+}
