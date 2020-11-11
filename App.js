@@ -87,8 +87,7 @@ const AppNavigator = connectToStore(({ settings: { DarkMode } }) => (
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    loadData();
-    syncInBackground();
+    loadData().then(_ => syncInBackground())
   }
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
@@ -106,8 +105,7 @@ export default class App extends React.Component {
         break;
       case "active":
         // TODO make sure this is the best solution;
-        loadData();
-        syncInBackground();
+        loadData().then(_ => syncInBackground());
         break;
       default:
         console.log("app state:", nextAppState);
