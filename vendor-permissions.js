@@ -5,10 +5,10 @@ import { Alert } from "react-native";
 
 export const phoneContacts = async (alertIfFailed = true) => {
     const { status } = await Contacts.requestPermissionsAsync();
-    console.log("status:", status);
     if (status === 'granted') {
         const { data } = await Contacts.getContactsAsync();
         const usableMedias = data.filter(({ birthday }) => birthday)
+        console.log('hfkds', usableMedias);
         return usableMedias;
     } else {
       // throw error
@@ -37,5 +37,5 @@ export const getPhoneContacts = alertIfFailed => syncWrapper(alertIfFailed, "pho
 
 export const syncInBackground = async () => {
   const { synced: { phone } } = store.getState();
-  if(phone && phone.synced) getPhoneContacts(false)();
+  if(phone && phone.isSynced) getPhoneContacts(false)();
 }
