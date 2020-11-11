@@ -110,6 +110,7 @@ function ContactsPage(props) {
 		  		</View></TouchableWithoutFeedback>
 	  		))}
 		</View>
+	    <View style={{ height: 30 }}></View>
 	</ScrollView>
 }
 export default connectToStore(ContactsPage);

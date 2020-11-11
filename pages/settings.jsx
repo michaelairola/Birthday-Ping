@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Text, View, Platform } from 'react-native';
+import { Button, Text, View, ScrollView, Platform } from 'react-native';
 import { SYNC_ROUTE } from '../routes.js';
 import { LoadingPage } from "../components/loading";
 import { connectToStore, receiveSettings } from "../db";
@@ -14,7 +14,7 @@ const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
 	const [ day, setDay ] = useState(undefined);
 	return isLoading ? <LoadingPage/> : (
 	<View style={{ flex: 1 }}>
-      <View style={{ backgroundColor: DarkMode ? "black" : '#EFEFF4', flex:1 }}>
+      <ScrollView style={{ backgroundColor: DarkMode ? "black" : '#EFEFF4', flex:1 }}>
         <SettingsList 
         	defaultItemSize={50}
         	borderColor={DarkMode ? "#424242" : '#c8c7cc'}
@@ -69,7 +69,8 @@ const SettingsPage = ({ isLoading, settings, navigation, route, dispatch }) => {
           	switchOnValueChange={DarkMode => dispatch(receiveSettings({ ...settings, DarkMode }))}
           />
 	    </SettingsList>
-      </View>
+	    <View style={{ height: 30 }}></View>
+      </ScrollView>
 	  {(time != undefined) && (day != undefined) ? (
 	  	<View>{Platform.OS == "ios" ? (
 	  		<View style={{ flexDirection: "row", justifyContent: "space-between"}}>
