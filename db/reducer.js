@@ -8,7 +8,7 @@ import {
 	RECEIVE_SYNC,
 } from "./actions.js";
 
-makeDate = (hrs = 0, mins = 0) => {
+const makeDate = (hrs = 0, mins = 0) => {
 	let d = new Date();
 	d.setHours(hrs);
 	d.setMinutes(mins)
@@ -24,8 +24,8 @@ const initState = {
 		"GiftRange": "1 Month",
 		"DarkMode": false,
 	},
-	contacts: new Map(),
-	medias: new Map(),
+	contacts: [],
+	medias: [],
 }
 
 const synced = ({ synced }, key, isFetching, isSynced, failed) => ({
@@ -34,25 +34,31 @@ const synced = ({ synced }, key, isFetching, isSynced, failed) => ({
 
 const sameBirthday = (b1, b2) => ["date", "month", "year"].reduce((acc, k) => acc && b1[k] == b2[k], true)
 const sameFullName = (b1, b2) => b1.full_name == b2.full_name;
-const sameContact = (m1, m2) => sameBirthday(m1.birthday,m2.birthday) && sameFullName(m1,m2) 
-const connectMediaToContact = (contacts, medias, key, media) => {
-	contacts.forEach((contact) => {
+const sameContact = m1 => m2 => sameBirthday(m1.birthday,m2.birthday) && sameFullName(m1,m2) 
+const connectMediaToContacts = (contacts, medias, key, media) => {
+	contacts.forEach((contact, i) => {
 		contact.mediaIds.forEach(mediaId => {
-			if(sameContact(medias.get(mediaId), media)) {
-				contact.mediaIds = [ ...contact.mediaIds, mediaId ];
-				return contact
+			if(medias.includes(sameContact(media))) {
+				return contacts.map((c, j) => {
+					if(i == j) c.mediaIds = [ ...contact.mediatIds, mediaId ];
+					return c
+				})
 			}
 		})
 	})
-	return { id: uuidv4(), mediaIds: [ media.id ] }
+	return [ ...contacts, { id: uuidv4(), mediaIds: [ media.id ] } ];
 }
 const syncMedias = ({ contacts, medias }, { key, new_medias }) => {
 	new_medias.forEach(media => {
-		if(!medias.has(media.id)) {
-			let contact = connectMediaToContact(contacts, medias, key, media); 
-			contacts.set(contact.id, contact);
-		}
-		medias.set(media.id, media);
+		let isPresent = false;
+		medias = medias.map(m => {
+			if(m.id == media.id) {isPresent = true; return media;}
+			return m;
+		})
+		if(!isPresent) {
+			contacts = connectMediaToContacts(contacts, medias, key, media)
+			medias = [ ...medias, media ];
+		} 
 	})
 	return { contacts, medias };
 }
@@ -74,10 +80,9 @@ export const AppReducer = (state = initState, action) => {
 	}
 }
 
-const getDefaultMedia = (contact, medias) => 
-	medias.get(contact.mediaIds[0])
+const getDefaultMedia = (contact, medias = []) => 
+	medias.find(({ id }) => id == contact.mediaIds[0])
 
-// export const organize_contacts = createSelector(({ contacts }) => contacts, ({ medias }) => medias, (contacts, medias) => {
 export const organize_contacts = ({ contacts, medias }) => {
 	const date = new Date();
 	const currentM = date.getMonth();

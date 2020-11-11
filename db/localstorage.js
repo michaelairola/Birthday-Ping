@@ -25,45 +25,17 @@ export const localstore = new Storage({
   }
 });
 
-const convMapToObj = (m) => {
-  let obj = {};
-  m.forEach((v, k) => {
-    obj[k] = v
-  });
-  return obj;
-}
-const convObjToMap = (obj) => {
-  let m = new Map();
-  Object.keys(obj).forEach(k => {
-    m.set(k, obj[k]);
-  })
-  return m;
-}
-const stateConverter = (state, fn = () => {}, keys = []) => {
-  keys.forEach(k => {
-    state[k] = fn(state[k]);
-  });
-  return state
-}
-const savableState = (state) => stateConverter(state, convMapToObj, ['contacts','medias']);
-const loadableState = (state) => stateConverter(state, convObjToMap, ['contacts', 'medias']);
-
 export const saveData = (deleteData) => {
-  // if(deleteData) {
-  //   localstore.remove({ key: 'state' })
-  // } else {
-    const state = savableState(store.getState());
     localstore.save({
       key: 'state',
-      data: state,
+      data: store.getState(),
       expires: null
     })
-  // }
 }
-export const loadData = () => {
+export const loadData = async () => {
   store.dispatch(requestState())
-  localstore.load({ key: 'state' }).then(state => {
+  return localstore.load({ key: 'state' }).then(state => {
     if(!state) return;
-    store.dispatch(receiveState(loadableState(state)))
+    store.dispatch(receiveState(state))
   })
 }
