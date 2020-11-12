@@ -5,6 +5,7 @@ import { styles } from '../styles.js';
 import { connect } from 'react-redux';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { connectToStore } from "../db";
+import { CONTACT_ROUTE } from "../routes.js";
 
 import { LoadingPage } from "../components/loading";
 import NoContacts from "../components/NoContacts";
@@ -67,20 +68,20 @@ const getAge = ({ day, month, year }) => {
 }
 
 function ContactsPage(props) {
-	let { navigation, route: { name, params }, settings: { DarkMode }, organized_contacts, contacts } = props
+	let { navigation, route: { name, params }, settings: { DarkMode }, contactsList, contacts } = props
 	if(!params) params = {};
 	let [ searchBar, setBar ] = useState(undefined);
 	let [ barShowing, setShow ] = useState(false);
-	return !organized_contacts.length ? <NoContacts navigation={navigation}/> : 
+	return !contactsList.length ? <NoContacts navigation={navigation}/> : 
   	<ScrollView style={{ flex: 1, backgroundColor: DarkMode ? "#121212" : undefined }}>
 		<SearchBar
 		  backgroundColor={DarkMode ? "#121212" : undefined}
 		  inputStyle={{flex: 1, backgroundColor: 'black'}}
 	      containerStyle={{ flex: 1, backgroundColor: 'black'}}
-		  data={organized_contacts}
+		  data={contactsList}
 		  ref={(ref) => setBar(ref)}
-		  handleResults={organized_contacts => navigation.navigate(name, { organized_contacts })}
-		  onBack={() => { navigation.navigate(name, { organized_contacts: [] }); setShow(false); searchBar.hide(); } }
+		  handleResults={contactsList => navigation.navigate(name, { contactsList })}
+		  onBack={() => { navigation.navigate(name, { contactsList: [] }); setShow(false); searchBar.hide(); } }
 		/>
 		<View style={{ flex: 1, marginTop: barShowing ? 75 : 0 }}>
 			<View style={{ flexDirection: "row", justifyContent: "space-between" , backgroundColor: DarkMode ? "#121212" : undefined }}>
@@ -89,25 +90,27 @@ function ContactsPage(props) {
 		  		<FontAwesome style={{ marginTop: 15, marginRight: 15, fontSize: 20 }} color={DarkMode ? "white" : "black"} name="search" onPress={() => { setShow(true); searchBar.show(); }} />
 		  		}
 			</View>
-		  	{organized_contacts.map(({ month, date, contacts },i) => (
-		  		<TouchableWithoutFeedback onPress={() => console.log("Hey chara, how are you today")} ><View key={i}>
+		  	{contactsList.map(({ month, date, contacts },i) => (
+			  	<View key={i}>
 			  		<View style={{ backgroundColor: DarkMode ? "#121212" : undefined}}>
 			  			{renderDay({ date, month }, DarkMode)}
 			  		</View>
-			  		{contacts.map(({ name, birthday }, key) => (
+			  		{contacts.map((contact, key) => (
+				  	  <TouchableWithoutFeedback onPress={() => navigation.navigate(CONTACT_ROUTE, { contact })} >
 				  		<View key={key} style={{ flexDirection: "row", alignItems: "center", padding: 10, width: "100%",
 						  	backgroundColor: DarkMode ? "#212121" : 'white',
 						  	borderColor: DarkMode ? "#424242" : "#A9A9A9",
 						  	borderBottomWidth: 1,
 					    }}>
 				  			<View style={{ fontSize: 18, flex: 6, }}>
-				  				<Text style={{ fontSize: 18, color: DarkMode ? "white" : "black" }}>{name}</Text>
-				  				{birthday.year ? <Text style={{ fontSize: 16, color: "grey"}}>Turns {getAge(birthday)}</Text> : undefined }
+				  				<Text style={{ fontSize: 18, color: DarkMode ? "white" : "black" }}>{contact.name}</Text>
+				  				{contact.birthday.year ? <Text style={{ fontSize: 16, color: "grey"}}>Turns {getAge(contact.birthday)}</Text> : undefined }
 			  				</View>
-		  					{renderDayDiff(birthday, DarkMode)}
+		  					{renderDayDiff(contact.birthday, DarkMode)}
 				  		</View>
+				  	  </TouchableWithoutFeedback>
 		  			))}
-		  		</View></TouchableWithoutFeedback>
+		  		</View>
 	  		))}
 		</View>
 	    <View style={{ height: 30 }}></View>

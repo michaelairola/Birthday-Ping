@@ -83,7 +83,7 @@ export const AppReducer = (state = initState, action) => {
 const getDefaultMedia = (contact, medias = []) => 
 	medias.find(({ id }) => id == contact.mediaIds[0])
 
-export const organize_contacts = ({ contacts, medias }) => {
+export const contactsList = ({ contacts, medias }) => {
 	const date = new Date();
 	const currentM = date.getMonth();
 	const currentD = date.getDate();

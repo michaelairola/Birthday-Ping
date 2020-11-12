@@ -11,7 +11,7 @@ import { CONTACTS_ROUTE, GIFTS_ROUTE, SETTINGS_ROUTE, SYNC_ROUTE, SELECT_ROUTE, 
 
 import ContactsPage from "./pages/contacts.jsx";
 import GiftsPage from "./pages/gifts.jsx";
-import { ContactPage } from "./pages/contact.jsx";
+import ContactPage from "./pages/contact.jsx";
 import { GiftPage } from "./pages/gift.jsx";
 import SettingsPage from "./pages/settings.jsx";
 import SyncPage from "./pages/sync.jsx";
@@ -75,7 +75,8 @@ const AppNavigator = connectToStore(({ settings: { DarkMode } }) => (
         {Object.keys(RegRoutes).map(key => (
           <Stack.Screen 
             key={key} name={key} 
-            component={RegRoutes[key]} 
+            component={RegRoutes[key]}
+            options={({ route: { params } }) => ({ title: key == CONTACT_ROUTE ? params["contact"].name : key })}
           />
         ))}
       </Stack.Navigator>
